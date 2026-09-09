@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Team Selection -- Pickleball Tournament</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<header class="topbar">
+  <h1>🏓 Team Selection</h1>
+  <nav><a href="dashboard.html">Menu</a><button onclick="logout()">Log Out</button></nav>
+</header>
+<main>
+  <div class="tabs">
+    <button id="tabFind" class="active">Find a Partner</button>
+    <button id="tabRequests">Requests</button>
+  </div>
+
+  <div id="findPanel">
+    <div class="card">
+      <h2>Pick which of your players</h2>
+      <label for="myPlayerSelect">Your unteamed player</label>
+      <select id="myPlayerSelect"></select>
+      <div id="findError" class="error-box" hidden></div>
+    </div>
+
+    <div class="card">
+      <h2>Search for a Partner</h2>
+      <label for="searchInput">Name</label>
+      <input id="searchInput" placeholder="Start typing a name..." />
+      <div id="searchResults"></div>
+    </div>
+
+    <div class="card">
+      <h2>Or, Random Assignment</h2>
+      <p class="muted">Opt in and we'll pair you with the next person who also opts in for the same division. If someone sends you a direct request while you're opted in, it's accepted automatically.</p>
+      <button class="secondary" id="randomBtn">Opt In to Random Assignment</button>
+      <div id="randomStatus" class="notice-box" hidden></div>
+    </div>
+  </div>
+
+  <div id="requestsPanel" hidden>
+    <div class="card">
+      <h2>Incoming Requests</h2>
+      <div id="incomingList" class="muted">Loading...</div>
+    </div>
+    <div class="card">
+      <h2>Outgoing Requests</h2>
+      <div id="outgoingList" class="muted">Loading...</div>
+    </div>
+  </div>
+</main>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/guard.js"></script>
+<script src="js/team-selection.js"></script>
+</body>
+</html>

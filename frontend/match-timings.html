@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Match Timings -- Pickleball Tournament</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<header class="topbar">
+  <h1>🏓 Match Timings</h1>
+  <nav><a href="dashboard.html">Menu</a><button onclick="logout()">Log Out</button></nav>
+</header>
+<main>
+  <div class="tabs" id="divisionTabs">
+    <button data-division="men" class="active">Men's</button>
+    <button data-division="women">Women's</button>
+    <button data-division="kids">Kids</button>
+  </div>
+  <div class="tabs" id="stageTabs">
+    <button data-stage="round_robin" class="active">Round Robin</button>
+    <button data-stage="elimination">Elimination</button>
+  </div>
+  <div id="matchesContent" class="muted">Loading...</div>
+</main>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/guard.js"></script>
+<script src="js/match-timings.js"></script>
+</body>
+</html>

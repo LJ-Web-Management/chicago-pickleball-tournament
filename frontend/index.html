@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Chicago Pickleball Tournament</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<header class="topbar">
+  <h1>🏓 Chicago Pickleball Tournament</h1>
+  <nav><a href="admin.html">Admin</a></nav>
+</header>
+<main>
+  <div class="card">
+    <div class="tabs">
+      <button id="tabLogin" class="active">Log In</button>
+      <button id="tabSignup">Sign Up</button>
+    </div>
+
+    <div id="loginPanel">
+      <h2>Log In</h2>
+      <label for="loginEmail">Email</label>
+      <input id="loginEmail" type="email" autocomplete="email" />
+      <label for="loginPassword">Password</label>
+      <input id="loginPassword" type="password" autocomplete="current-password" />
+      <div id="loginError" class="error-box" hidden></div>
+      <button class="primary" id="loginBtn">Log In</button>
+    </div>
+
+    <div id="signupPanel" hidden>
+      <h2>Create Your Account</h2>
+      <p class="muted">One account can hold multiple players -- add everyone you're registering under Player Info after signing up.</p>
+      <label for="signupEmail">Email</label>
+      <input id="signupEmail" type="email" autocomplete="email" />
+      <label for="signupPassword">Password</label>
+      <input id="signupPassword" type="password" autocomplete="new-password" />
+      <label for="signupPassword2">Confirm Password</label>
+      <input id="signupPassword2" type="password" autocomplete="new-password" />
+      <div id="signupError" class="error-box" hidden></div>
+      <button class="primary" id="signupBtn">Sign Up</button>
+    </div>
+  </div>
+</main>
+<footer class="note">Men's: 24 teams / 6 courts &middot; Women's: 16 teams / 4 courts &middot; Kids: 8 teams / 2 courts</footer>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/guard.js"></script>
+<script src="js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+:root {
+  --bg: #f4f6f5;
+  --card: #ffffff;
+  --ink: #1a2b23;
+  --muted: #5c6b64;
+  --brand: #1f7a4d;
+  --brand-dark: #145c39;
+  --accent: #e8a33d;
+  --border: #dde3e0;
+  --danger: #c0392b;
+  --radius: 12px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+header.topbar {
+  background: var(--brand);
+  color: #fff;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+header.topbar h1 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+header.topbar nav a, header.topbar nav button {
+  color: #fff;
+  text-decoration: none;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin-left: 6px;
+  cursor: pointer;
+}
+header.topbar nav a:hover, header.topbar nav button:hover { background: rgba(255,255,255,0.28); }
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.menu-grid a {
+  display: block;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 14px;
+  text-align: center;
+  text-decoration: none;
+  color: var(--ink);
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.menu-grid a:hover { border-color: var(--brand); color: var(--brand-dark); }
+
+h2 { margin-top: 0; }
+
+label { display: block; font-size: 0.85rem; color: var(--muted); margin: 10px 0 4px; }
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+button.primary, button {
+  background: var(--brand);
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-top: 12px;
+}
+button.primary:hover, button:hover { background: var(--brand-dark); }
+button.secondary { background: #eef1ef; color: var(--ink); }
+button.secondary:hover { background: #e2e7e4; }
+button.danger { background: var(--danger); }
+button.danger:hover { background: #96291d; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.error-box {
+  background: #fdecea;
+  color: var(--danger);
+  border: 1px solid #f5c2bc;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin: 10px 0;
+  font-size: 0.9rem;
+}
+
+.notice-box {
+  background: #eaf6ee;
+  color: var(--brand-dark);
+  border: 1px solid #bfe3cc;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin: 10px 0;
+  font-size: 0.9rem;
+}
+
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); }
+th { color: var(--muted); font-weight: 600; }
+
+.tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.tabs button { margin-top: 0; background: #eef1ef; color: var(--ink); }
+.tabs button.active { background: var(--brand); color: #fff; }
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.badge.win { background: #eaf6ee; color: var(--brand-dark); }
+.badge.pending { background: #fff6e5; color: #8a5b00; }
+.badge.tie { background: #eef1ef; color: var(--muted); }
+
+.match-card { border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 10px; }
+.match-card .meta { font-size: 0.8rem; color: var(--muted); margin-bottom: 6px; }
+.match-card .teams { display: flex; justify-content: space-between; align-items: center; font-weight: 600; margin-bottom: 8px; }
+.set-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.set-row span { width: 56px; font-size: 0.8rem; color: var(--muted); }
+.set-row button { flex: 1; margin-top: 0; padding: 8px; font-size: 0.85rem; }
+.set-row button.chosen { background: var(--brand-dark); }
+
+.link-btn { background: none; border: none; color: var(--brand-dark); text-decoration: underline; cursor: pointer; padding: 0; margin: 0; font-size: 0.85rem; }
+
+.muted { color: var(--muted); font-size: 0.85rem; }
+
+footer.note { text-align: center; color: var(--muted); font-size: 0.75rem; margin-top: 24px; }

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin -- Pickleball Tournament</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<header class="topbar">
+  <h1>🏓 Admin</h1>
+  <nav><a href="index.html">Player Site</a><button id="adminLogoutBtn" hidden>Log Out</button></nav>
+</header>
+<main>
+  <div id="loginCard" class="card">
+    <h2>Admin Login</h2>
+    <label for="adminUser">Username</label>
+    <input id="adminUser" />
+    <label for="adminPass">Password</label>
+    <input id="adminPass" type="password" />
+    <div id="adminLoginError" class="error-box" hidden></div>
+    <button class="primary" id="adminLoginBtn">Log In</button>
+  </div>
+
+  <div id="adminPanel" hidden>
+    <div class="tabs">
+      <button data-tab="stats" class="active">Stats</button>
+      <button data-tab="players">Players</button>
+      <button data-tab="matches">Matches</button>
+    </div>
+
+    <div id="statsTab">
+      <div class="card"><div id="statsContent" class="muted">Loading...</div></div>
+    </div>
+
+    <div id="playersTab" hidden>
+      <div class="card">
+        <label for="playerSearch">Search players</label>
+        <input id="playerSearch" placeholder="Name or email..." />
+        <div id="playersContent" class="muted">Loading...</div>
+      </div>
+    </div>
+
+    <div id="matchesTab" hidden>
+      <div class="card">
+        <label for="matchDivision">Division</label>
+        <select id="matchDivision">
+          <option value="men">Men's</option>
+          <option value="women">Women's</option>
+          <option value="kids">Kids</option>
+        </select>
+        <div class="tabs" style="margin-top:12px;">
+          <button data-stage="round_robin" class="active">Round Robin</button>
+          <button data-stage="elimination">Elimination</button>
+        </div>
+        <button class="secondary" id="generateBracketBtn" hidden>Generate Elimination Bracket</button>
+        <button class="secondary" id="regenerateBracketBtn" hidden>Regenerate (overwrite)</button>
+      </div>
+      <div id="adminMatchesContent" class="muted">Loading...</div>
+    </div>
+  </div>
+</main>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/guard.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "chicago-pickleball-tournament",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Backend (Vercel serverless) for the Chicago Pickleball Doubles Tournament app.",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.1.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "stripe": "^16.12.0"
+  }
+}

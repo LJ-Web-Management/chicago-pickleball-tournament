@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Player Info -- Pickleball Tournament</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<header class="topbar">
+  <h1>🏓 Player Info</h1>
+  <nav><a href="dashboard.html">Menu</a><button onclick="logout()">Log Out</button></nav>
+</header>
+<main>
+  <div class="card">
+    <h2>Add a Player</h2>
+    <p class="muted">Add as many players as you're registering under this account.</p>
+    <label for="firstName">First Name</label>
+    <input id="firstName" />
+    <label for="lastName">Last Name</label>
+    <input id="lastName" />
+    <label for="shirtSize">Shirt Size</label>
+    <select id="shirtSize"></select>
+    <label for="division">Division</label>
+    <select id="division">
+      <option value="men">Men's</option>
+      <option value="women">Women's</option>
+      <option value="kids">Kids</option>
+    </select>
+    <div id="addError" class="error-box" hidden></div>
+    <div id="addNotice" class="notice-box" hidden></div>
+    <button class="primary" id="addBtn">Add Player</button>
+  </div>
+
+  <div class="card">
+    <h2>Your Players</h2>
+    <div id="playersList" class="muted">Loading...</div>
+  </div>
+</main>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/guard.js"></script>
+<script src="js/player-info.js"></script>
+</body>
+</html>
