@@ -2,6 +2,9 @@
 
 Full-stack tournament app: **frontend on GitHub Pages**, **backend on Vercel** (Node serverless functions + Postgres).
 
+- **Live site**: https://lj-web-management.github.io/chicago-pickleball-tournament/
+- **Repo**: https://github.com/LJ-Web-Management/chicago-pickleball-tournament
+
 - 3 divisions: Men's (24 teams / 6 courts), Women's (16 teams / 4 courts), Kids (8 teams / 2 courts) -- always 4 teams per court.
 - 4-hour round robin (pools of 4 per court, full round robin within the pool) followed by a 4-hour standard single-elimination bracket, both auto-scheduled in 30-minute slots.
 - Email/password accounts that can hold multiple players; team requests ("friend requests"), random assignment, auto-assigned team numbers.
@@ -40,7 +43,7 @@ frontend/   Static site deployed to GitHub Pages
 | `JWT_SECRET` | A long random string (e.g. run `openssl rand -hex 32`) |
 | `ADMIN_USERNAME` | `admin52` |
 | `ADMIN_PASSWORD` | `admin53` |
-| `FRONTEND_ORIGIN` | Your GitHub Pages URL, e.g. `https://<org>.github.io` |
+| `FRONTEND_ORIGIN` | `https://lj-web-management.github.io` |
 | `STRIPE_SECRET_KEY` | (leave blank until Stripe is ready) |
 | `STRIPE_WEBHOOK_SECRET` | (leave blank until Stripe is ready) |
 
@@ -56,9 +59,9 @@ apiBase: 'https://chicago-pickleball-tournament.vercel.app/api',
 
 Commit and push -- GitHub Actions redeploys the Pages site automatically.
 
-### 4. Turn on GitHub Pages
+### 4. GitHub Pages (already on)
 
-Repo Settings -> Pages -> Build and deployment -> **Source: GitHub Actions**. The included workflow ([.github/workflows/pages.yml](.github/workflows/pages.yml)) then deploys `frontend/` on every push to `main`.
+Pages is already enabled with **Source: GitHub Actions**. The included workflow ([.github/workflows/pages.yml](.github/workflows/pages.yml)) deploys `frontend/` on every push to `main` -- nothing to do here unless you fork/rename the repo.
 
 ## Admin panel
 
