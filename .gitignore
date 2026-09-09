@@ -4,3 +4,9 @@ node_modules/
 .env.local
 *.log
 .DS_Store
+.env*
+
+# Local agent-skill artifacts auto-installed by `vercel integration add neon`
+.agents/
+.claude/skills/
+skills-lock.json
