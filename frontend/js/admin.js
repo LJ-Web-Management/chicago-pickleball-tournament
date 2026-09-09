@@ -199,7 +199,14 @@ function renderAdminMatches() {
 function adminMatchCardHtml(m) {
   const teamAName = m.team_a ? `Team #${m.team_a}` : 'TBD';
   const teamBName = m.team_b ? `Team #${m.team_b}` : 'TBD';
-  const winnerBadge = m.winner ? `<span class="badge win">Winner: Team #${m.winner}</span>` : m.is_bye ? '<span class="badge tie">BYE</span>' : '';
+  const isTie = !m.winner && !m.is_bye && (m.sets || []).length > 0;
+  const winnerBadge = m.winner
+    ? `<span class="badge win">Winner: Team #${m.winner}</span>`
+    : m.is_bye
+    ? '<span class="badge tie">BYE</span>'
+    : isTie
+    ? '<span class="badge tie">Saved as a tie</span>'
+    : '';
 
   let setsHtml = '';
   if (!m.is_bye && m.team_a && m.team_b) {

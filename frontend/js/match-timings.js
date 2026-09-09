@@ -82,10 +82,13 @@ function render() {
 }
 
 function matchCardHtml(m, stage) {
+  const isTie = !m.winner && !m.is_bye && (m.sets || []).length > 0;
   const winnerBadge = m.winner
     ? `<span class="badge win">Winner: Team #${m.winner}</span>`
     : m.is_bye
     ? '<span class="badge tie">BYE</span>'
+    : isTie
+    ? '<span class="badge tie">Saved as a tie</span>'
     : '';
 
   if (stage === 'elimination' && (!m.team_a || !m.team_b) && !m.is_bye) {
@@ -136,8 +139,11 @@ function wireButtons() {
       const newSets = (match.sets || []).slice(0, Number(index));
       newSets[Number(index)] = side;
       try {
-        await Api.post('/matches/result', { division, stage, matchKey: key, sets: newSets });
+        const result = await Api.post('/matches/result', { division, stage, matchKey: key, sets: newSets });
         await load();
+        if (!result.winner && newSets.length >= 2) {
+          alert('Saved -- this match is a tie (no clear winner from the sets entered).');
+        }
       } catch (err) {
         alert(err.message);
       }
