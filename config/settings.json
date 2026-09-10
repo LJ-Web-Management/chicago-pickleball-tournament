@@ -32,7 +32,7 @@
     "myMatches": true,
     "playerInfo": true,
     "teamSelection": true,
-    "feePayment": true,
+    "feePayment": false,
     "playerList": true
   },
   "rulesUploadedAt": null
