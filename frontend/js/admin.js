@@ -246,15 +246,13 @@ function adminMatchCardHtml(m) {
 
   let setsHtml = '';
   if (!m.is_bye && m.team_a && m.team_b) {
-    for (let i = 0; i < 3; i++) {
-      const chosen = (m.sets || [])[i];
-      setsHtml += `
-        <div class="set-row">
-          <span>Set ${i + 1}</span>
-          <button class="setBtn ${chosen === 'A' ? 'chosen' : ''}" data-stage="${m.stage}" data-key="${m.match_key}" data-index="${i}" data-side="A">${teamAName}</button>
-          <button class="setBtn ${chosen === 'B' ? 'chosen' : ''}" data-stage="${m.stage}" data-key="${m.match_key}" data-index="${i}" data-side="B">${teamBName}</button>
-        </div>`;
-    }
+    const currentChoice = m.winner === m.team_a ? 'A' : m.winner === m.team_b ? 'B' : isTie ? 'TIE' : null;
+    setsHtml = `
+      <div class="set-row">
+        <button class="setBtn ${currentChoice === 'A' ? 'chosen' : ''}" data-stage="${m.stage}" data-key="${m.match_key}" data-choice="A">${teamAName} Won</button>
+        ${m.stage === 'round_robin' ? `<button class="setBtn ${currentChoice === 'TIE' ? 'chosen' : ''}" data-stage="${m.stage}" data-key="${m.match_key}" data-choice="TIE">Tie</button>` : ''}
+        <button class="setBtn ${currentChoice === 'B' ? 'chosen' : ''}" data-stage="${m.stage}" data-key="${m.match_key}" data-choice="B">${teamBName} Won</button>
+      </div>`;
   }
 
   const canUndo = m.winner !== null && !m.is_bye;
@@ -272,16 +270,18 @@ function adminMatchCardHtml(m) {
     </div>`;
 }
 
+function setsForChoice(choice) {
+  if (choice === 'A') return ['A', 'A'];
+  if (choice === 'B') return ['B', 'B'];
+  return ['A', 'B']; // TIE
+}
+
 function wireAdminButtons() {
   document.querySelectorAll('.setBtn').forEach((btn) => {
     btn.addEventListener('click', async () => {
-      const { stage, key, index, side } = btn.dataset;
-      const list = stage === 'round_robin' ? adminMatchData.roundRobin : adminMatchData.elimination;
-      const match = list.find((m) => m.match_key === key);
-      const newSets = (match.sets || []).slice(0, Number(index));
-      newSets[Number(index)] = side;
+      const { stage, key, choice } = btn.dataset;
       try {
-        await Api.post('/matches/result', { division: adminDivision, stage, matchKey: key, sets: newSets }, { admin: true });
+        await Api.post('/matches/result', { division: adminDivision, stage, matchKey: key, sets: setsForChoice(choice) }, { admin: true });
         loadMatches();
       } catch (err) {
         alert(err.message);

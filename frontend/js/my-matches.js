@@ -26,43 +26,33 @@ function matchCardHtml(m) {
       </div>`;
   }
 
-  const sets = m.sets || [];
-  const showTieHint = m.stage === 'elimination' && sets.length >= 2 && sets[0] !== sets[1];
-  const rowsToShow = showTieHint || sets.length >= 2 ? 3 : sets.length + 1;
-
-  let setsHtml = '';
-  for (let i = 0; i < Math.min(rowsToShow, 3); i++) {
-    const chosen = sets[i];
-    const label = m.stage === 'elimination' && i === 2 && sets[0] !== sets[1] ? 'Tiebreak' : `Set ${i + 1}`;
-    setsHtml += `
-      <div class="set-row">
-        <span>${label}</span>
-        <button class="setBtn ${chosen === 'A' ? 'chosen' : ''}" data-division="${m.division}" data-stage="${m.stage}" data-key="${m.match_key}" data-index="${i}" data-side="A">Team #${m.team_a}</button>
-        <button class="setBtn ${chosen === 'B' ? 'chosen' : ''}" data-division="${m.division}" data-stage="${m.stage}" data-key="${m.match_key}" data-index="${i}" data-side="B">Team #${m.team_b}</button>
-      </div>`;
-  }
+  const currentChoice = m.winner === m.team_a ? 'A' : m.winner === m.team_b ? 'B' : isTie ? 'TIE' : null;
 
   return `
     <div class="match-card">
       <div class="meta">${m.stage === 'round_robin' ? 'Round Robin' : `Elimination -- Round ${m.round}`} &middot; Court ${m.court} &middot; ${m.start_time}</div>
       <div class="teams"><span>${teamLabel(m.team_a, m.team_a_players)} vs ${teamLabel(m.team_b, m.team_b_players)}</span> ${winnerBadge}</div>
-      ${setsHtml}
+      <div class="set-row">
+        <button class="setBtn ${currentChoice === 'A' ? 'chosen' : ''}" data-division="${m.division}" data-stage="${m.stage}" data-key="${m.match_key}" data-choice="A">Team #${m.team_a} Won</button>
+        ${m.stage === 'round_robin' ? `<button class="setBtn ${currentChoice === 'TIE' ? 'chosen' : ''}" data-division="${m.division}" data-stage="${m.stage}" data-key="${m.match_key}" data-choice="TIE">Tie</button>` : ''}
+        <button class="setBtn ${currentChoice === 'B' ? 'chosen' : ''}" data-division="${m.division}" data-stage="${m.stage}" data-key="${m.match_key}" data-choice="B">Team #${m.team_b} Won</button>
+      </div>
     </div>`;
+}
+
+function setsForChoice(choice) {
+  if (choice === 'A') return ['A', 'A'];
+  if (choice === 'B') return ['B', 'B'];
+  return ['A', 'B']; // TIE
 }
 
 function wireButtons() {
   document.querySelectorAll('.setBtn').forEach((btn) => {
     btn.addEventListener('click', async () => {
-      const { division, stage, key, index, side } = btn.dataset;
-      const match = myMatches.find((m) => m.match_key === key && m.division === division && m.stage === stage);
-      const newSets = (match.sets || []).slice(0, Number(index));
-      newSets[Number(index)] = side;
+      const { division, stage, key, choice } = btn.dataset;
       try {
-        const result = await Api.post('/matches/result', { division, stage, matchKey: key, sets: newSets });
+        await Api.post('/matches/result', { division, stage, matchKey: key, sets: setsForChoice(choice) });
         await load();
-        if (!result.winner && newSets.length >= 2) {
-          alert('Saved -- this match is a tie (no clear winner from the sets entered).');
-        }
       } catch (err) {
         alert(err.message);
       }
