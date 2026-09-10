@@ -1,17 +1,19 @@
 requireLogin();
 
-let currentDivision = 'men';
+let currentDivision = null;
 let currentStage = 'round_robin';
 let cachedData = null;
 
-document.querySelectorAll('#divisionTabs button').forEach((btn) => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('#divisionTabs button').forEach((b) => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentDivision = btn.dataset.division;
-    load();
+function wireDivisionTabs() {
+  document.querySelectorAll('#divisionTabs button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#divisionTabs button').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentDivision = btn.dataset.division;
+      load();
+    });
   });
-});
+}
 document.querySelectorAll('#stageTabs button').forEach((btn) => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('#stageTabs button').forEach((b) => b.classList.remove('active'));
@@ -151,4 +153,22 @@ function wireButtons() {
   });
 }
 
-load();
+document.getElementById('exportBtn').addEventListener('click', () => {
+  if (!cachedData) return;
+  const matches = currentStage === 'round_robin' ? cachedData.roundRobin : cachedData.elimination;
+  downloadCsv(`${currentDivision}-${currentStage}-schedule.csv`, matches);
+});
+
+(async () => {
+  const settings = await Branding.init('matchTimings');
+  if (!settings) return;
+
+  const tabsEl = document.getElementById('divisionTabs');
+  tabsEl.innerHTML = settings.divisionOrder
+    .map((key, i) => `<button data-division="${key}" class="${i === 0 ? 'active' : ''}">${Branding.divisionLabel(settings, key)}</button>`)
+    .join('');
+  currentDivision = settings.divisionOrder[0];
+  wireDivisionTabs();
+
+  load();
+})();

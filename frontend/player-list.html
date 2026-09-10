@@ -8,7 +8,7 @@
 </head>
 <body>
 <header class="topbar">
-  <h1>🏓 Player List</h1>
+  <h1>Player List</h1>
   <nav><a href="dashboard.html">Menu</a><button onclick="logout()">Log Out</button></nav>
 </header>
 <main>
@@ -19,30 +19,7 @@
 <script src="js/config.js"></script>
 <script src="js/api.js"></script>
 <script src="js/guard.js"></script>
-<script>
-requireLogin();
-async function load() {
-  const el = document.getElementById('playerListContent');
-  try {
-    const data = await Api.get('/players/list');
-    if (data.players.length === 0) { el.innerHTML = '<p class="muted">No players registered yet.</p>'; return; }
-    let currentDivision = null;
-    let html = '';
-    data.players.forEach((p) => {
-      if (p.division !== currentDivision) {
-        currentDivision = p.division;
-        if (html) html += '</table>';
-        html += `<h2>${divisionLabel(p.division)}</h2><table><thead><tr><th>Name</th><th>Team #</th><th>Partner</th></tr></thead><tbody>`;
-      }
-      html += `<tr><td>${p.firstName} ${p.lastName}</td><td>${p.teamNumber || '--'}</td><td>${p.hasPartner ? p.partnerName : '<span class="muted">no partner yet</span>'}</td></tr>`;
-    });
-    html += '</table>';
-    el.innerHTML = html;
-  } catch (err) {
-    el.innerHTML = `<div class="error-box">${err.message}</div>`;
-  }
-}
-load();
-</script>
+<script src="js/branding.js"></script>
+<script src="js/player-list.js"></script>
 </body>
 </html>

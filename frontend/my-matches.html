@@ -3,28 +3,23 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Fee Payment -- Pickleball Tournament</title>
+<title>My Matches -- Pickleball Tournament</title>
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
 <header class="topbar">
-  <h1>Fee Payment</h1>
+  <h1>My Matches</h1>
   <nav><a href="dashboard.html">Menu</a><button onclick="logout()">Log Out</button></nav>
 </header>
 <main>
-  <div class="card">
-    <h2>Select Players to Pay For</h2>
-    <p class="muted" id="feeNote"></p>
-    <div id="playersList" class="muted">Loading...</div>
-    <div id="payError" class="error-box" hidden></div>
-    <div id="payNotice" class="notice-box" hidden></div>
-    <button class="primary" id="payBtn">Pay Selected</button>
-  </div>
+  <button class="secondary" id="exportBtn" style="margin-bottom:14px;" hidden>Export My Schedule (CSV)</button>
+  <div id="content" class="muted">Loading...</div>
 </main>
 <script src="js/config.js"></script>
 <script src="js/api.js"></script>
 <script src="js/guard.js"></script>
 <script src="js/branding.js"></script>
-<script src="js/fee-payment.js"></script>
+<script src="js/export.js"></script>
+<script src="js/my-matches.js"></script>
 </body>
 </html>

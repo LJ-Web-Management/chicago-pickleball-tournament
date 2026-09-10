@@ -54,3 +54,16 @@ document.getElementById('signupBtn').addEventListener('click', async () => {
 if (Api.getToken()) {
   window.location.href = 'dashboard.html';
 }
+
+Branding.init().then((settings) => {
+  if (!settings) return;
+  const el = document.getElementById('divisionSummary');
+  if (el) {
+    el.textContent = settings.divisionOrder
+      .map((key) => {
+        const d = settings.divisions[key];
+        return `${d.label}: ${d.teams} teams / ${d.courts} courts`;
+      })
+      .join(' · ');
+  }
+});

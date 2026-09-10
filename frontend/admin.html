@@ -8,7 +8,7 @@
 </head>
 <body>
 <header class="topbar">
-  <h1>🏓 Admin</h1>
+  <h1>Admin</h1>
   <nav><a href="index.html">Player Site</a><button id="adminLogoutBtn" hidden>Log Out</button></nav>
 </header>
 <main>
@@ -27,6 +27,7 @@
       <button data-tab="stats" class="active">Stats</button>
       <button data-tab="players">Players</button>
       <button data-tab="matches">Matches</button>
+      <button data-tab="settings">Settings</button>
     </div>
 
     <div id="statsTab">
@@ -44,25 +45,72 @@
     <div id="matchesTab" hidden>
       <div class="card">
         <label for="matchDivision">Division</label>
-        <select id="matchDivision">
-          <option value="men">Men's</option>
-          <option value="women">Women's</option>
-          <option value="kids">Kids</option>
-        </select>
+        <select id="matchDivision"></select>
         <div class="tabs" style="margin-top:12px;">
           <button data-stage="round_robin" class="active">Round Robin</button>
           <button data-stage="elimination">Elimination</button>
         </div>
         <button class="secondary" id="generateBracketBtn" hidden>Generate Elimination Bracket</button>
         <button class="secondary" id="regenerateBracketBtn" hidden>Regenerate (overwrite)</button>
+        <button class="secondary" id="exportMatchesBtn">Export Schedule (CSV)</button>
       </div>
       <div id="adminMatchesContent" class="muted">Loading...</div>
+    </div>
+
+    <div id="settingsTab" hidden>
+      <div class="card">
+        <h2>Event</h2>
+        <label for="setEventTitle">Event title</label>
+        <input id="setEventTitle" />
+        <label for="setFee">Registration fee per player (USD)</label>
+        <input id="setFee" type="number" min="0" step="0.01" />
+      </div>
+
+      <div class="card">
+        <h2>Schedule timing</h2>
+        <label for="setSlotMinutes">Minutes per match slot</label>
+        <input id="setSlotMinutes" type="number" min="1" step="1" />
+        <label for="setRRStart">Round robin start time (24h, e.g. 09:00)</label>
+        <input id="setRRStart" placeholder="09:00" />
+        <label for="setElimStart">Elimination start time (24h, e.g. 14:00)</label>
+        <input id="setElimStart" placeholder="14:00" />
+        <label for="setAdvance">Teams advancing per pool to elimination</label>
+        <input id="setAdvance" type="number" min="1" step="1" />
+      </div>
+
+      <div class="card">
+        <h2>Divisions</h2>
+        <p class="muted">Team count must divide evenly by court count (every court hosts an equal-size pool).</p>
+        <div id="divisionSettings"></div>
+      </div>
+
+      <div class="card">
+        <h2>Pages</h2>
+        <div id="pageSettings"></div>
+      </div>
+
+      <div class="card">
+        <div id="settingsError" class="error-box" hidden></div>
+        <div id="settingsNotice" class="notice-box" hidden></div>
+        <button class="primary" id="saveSettingsBtn">Save Settings</button>
+      </div>
+
+      <div class="card">
+        <h2>Rules Document</h2>
+        <p class="muted" id="rulesStatus">No rules document uploaded yet.</p>
+        <label for="rulesFile">Upload rules PDF</label>
+        <input id="rulesFile" type="file" accept="application/pdf" />
+        <div id="rulesError" class="error-box" hidden></div>
+        <div id="rulesNotice" class="notice-box" hidden></div>
+        <button class="primary" id="uploadRulesBtn">Upload</button>
+      </div>
     </div>
   </div>
 </main>
 <script src="js/config.js"></script>
 <script src="js/api.js"></script>
 <script src="js/guard.js"></script>
+<script src="js/export.js"></script>
 <script src="js/admin.js"></script>
 </body>
 </html>

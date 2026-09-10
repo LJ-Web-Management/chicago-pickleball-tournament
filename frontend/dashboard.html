@@ -8,28 +8,45 @@
 </head>
 <body>
 <header class="topbar">
-  <h1>🏓 Chicago Pickleball Tournament</h1>
+  <h1 data-event-title>Chicago Pickleball Tournament</h1>
   <nav><button onclick="logout()">Log Out</button></nav>
 </header>
 <main>
   <div class="card">
     <p class="muted" id="welcomeText">Welcome!</p>
   </div>
-  <div class="menu-grid">
-    <a href="match-timings.html">⏱️<br />Match Timings</a>
-    <a href="player-info.html">🧑‍🤝‍🧑<br />Player Info</a>
-    <a href="team-selection.html">🤝<br />Team Selection</a>
-    <a href="fee-payment.html">💳<br />Fee Payment</a>
-    <a href="player-list.html">📋<br />Player List</a>
-  </div>
+  <div class="menu-grid" id="menuGrid"></div>
+  <p id="rulesLink" class="muted" hidden style="margin-top:16px;">
+    <a href="rules.pdf" target="_blank" rel="noopener">Tournament Rules (PDF)</a>
+  </p>
 </main>
 <script src="js/config.js"></script>
 <script src="js/api.js"></script>
 <script src="js/guard.js"></script>
+<script src="js/branding.js"></script>
 <script>
   requireLogin();
   const u = Api.getUser();
   if (u) document.getElementById('welcomeText').textContent = `Logged in as ${u.email}`;
+
+  const MENU_ITEMS = [
+    { key: 'matchTimings', href: 'match-timings.html', label: 'Match Timings' },
+    { key: 'myMatches', href: 'my-matches.html', label: 'My Matches' },
+    { key: 'playerInfo', href: 'player-info.html', label: 'Player Info' },
+    { key: 'teamSelection', href: 'team-selection.html', label: 'Team Selection' },
+    { key: 'feePayment', href: 'fee-payment.html', label: 'Fee Payment' },
+    { key: 'playerList', href: 'player-list.html', label: 'Player List' },
+  ];
+
+  Branding.get().then((settings) => {
+    const grid = document.getElementById('menuGrid');
+    grid.innerHTML = MENU_ITEMS.filter((item) => settings.pages[item.key] !== false)
+      .map((item) => `<a href="${item.href}">${item.label}</a>`)
+      .join('');
+    if (settings.rulesUploadedAt) {
+      document.getElementById('rulesLink').hidden = false;
+    }
+  });
 </script>
 </body>
 </html>

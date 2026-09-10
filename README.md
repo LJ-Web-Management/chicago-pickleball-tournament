@@ -8,9 +8,9 @@ Full-stack tournament app: **frontend on GitHub Pages**, **backend on Vercel** (
 - 3 divisions: Men's (24 teams / 6 courts), Women's (16 teams / 4 courts), Kids (8 teams / 2 courts) -- always 4 teams per court.
 - 4-hour round robin (pools of 4 per court, full round robin within the pool) followed by a 4-hour standard single-elimination bracket, both auto-scheduled in 30-minute slots.
 - Email/password accounts that can hold multiple players; team requests ("friend requests"), random assignment, auto-assigned team numbers.
-- Player list, player info management (add/edit/rescind), fee payment (Stripe, wire up later), and an admin panel.
+- Player list, player info management (add/edit/rescind), a per-player "My Matches" view, schedule CSV export, fee payment (Stripe, wire up later), and an admin panel.
 
-All schedule structure lives in code ([config/tournament.js](config/tournament.js), [lib/schedule.js](lib/schedule.js), [lib/bracket.js](lib/bracket.js)) so the database only ever stores people, teams, and results -- not the schedule itself.
+All schedule structure is a pure function of settings ([lib/schedule.js](lib/schedule.js), [lib/bracket.js](lib/bracket.js)) so the database only ever stores people, teams, and results -- not the schedule itself. Tournament-specific settings (division sizes/courts, fee, event title, which pages are enabled) live in [config/settings.json](config/settings.json), a versioned file in the repo rather than a database row -- see "Tournament settings" below.
 
 ## How the scheduling works
 
@@ -22,8 +22,8 @@ All schedule structure lives in code ([config/tournament.js](config/tournament.j
 
 ```
 api/        Vercel serverless functions (the backend)
-lib/        Shared backend logic: db, auth, scheduling, bracket engine
-config/     Hardcoded tournament structure (divisions, courts, fees, etc.)
+lib/        Shared backend logic: db, auth, scheduling, bracket engine, settings, GitHub commit helper
+config/     settings.json (tournament settings) and tournament.js (fixed values, e.g. shirt sizes)
 frontend/   Static site deployed to GitHub Pages
 .github/workflows/pages.yml   Auto-deploys frontend/ to GitHub Pages on push
 ```
@@ -46,6 +46,9 @@ frontend/   Static site deployed to GitHub Pages
 | `FRONTEND_ORIGIN` | `https://lj-web-management.github.io` |
 | `STRIPE_SECRET_KEY` | (leave blank until Stripe is ready) |
 | `STRIPE_WEBHOOK_SECRET` | (leave blank until Stripe is ready) |
+| `GITHUB_TOKEN` | A fine-grained PAT scoped to just this repo, "Contents: Read and write" only -- lets admin settings/rules-upload commit to the repo |
+| `GITHUB_REPO` | `LJ-Web-Management/chicago-pickleball-tournament` |
+| `GITHUB_BRANCH` | `main` |
 
 Redeploy after setting these (Vercel does this automatically on save, or push a commit).
 
@@ -72,10 +75,18 @@ Go to `admin.html` on the deployed site. Log in with the `ADMIN_USERNAME` / `ADM
 - Override any match result, undo a result (automatically un-propagates it from the elimination bracket if needed)
 - Manually correct an elimination matchup before it's been played
 - Generate/regenerate the elimination bracket for a division
+- Mark a player paid/unpaid with one click
+- Export any division/stage's schedule to CSV
+- Upload a rules PDF (committed to the repo at `frontend/rules.pdf`, linked from the player dashboard once uploaded)
+- Edit tournament settings: event title, registration fee, match slot length, round-robin/elimination start times, teams advancing per pool, each division's label/team count/court count, and which player-facing pages are turned on
+
+## Tournament settings (moving this app to a different event)
+
+Everything that's specific to *this* tournament -- division sizes and court counts, the registration fee, the event title, which pages are live -- lives in [config/settings.json](config/settings.json), not in code and not in the database. The admin Settings tab edits it directly: changes commit straight to that file in the repo (via the GitHub Contents API, using `GITHUB_TOKEN`) and take effect within about 20 seconds (the backend caches reads briefly rather than hitting GitHub on every request). To reuse this app for a different tournament, you mostly just need to change values there -- no code changes or redeploy required. Note that a division's team count must divide evenly by its court count, since every court hosts an equal-size round-robin pool.
 
 ## Registration caps
 
-Enforced server-side: 48 men's players (24 teams), 32 women's players (16 teams), 16 kids players (8 teams). Once a division's player cap is hit, new signups for that division are rejected until admin opens it up (edit `config/tournament.js` and redeploy, or free up a slot by rescinding/editing existing players).
+Enforced server-side from the current settings (default: 48 men's players / 24 teams, 32 women's players / 16 teams, 16 kids players / 8 teams). Once a division's player cap is hit, new signups for that division are rejected until admin raises the team count in Settings or frees up a slot by rescinding/editing existing players.
 
 ## Stripe (added later)
 

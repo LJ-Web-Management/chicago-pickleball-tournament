@@ -178,4 +178,9 @@ async function loadRequests() {
   }
 }
 
-loadMyPlayers();
+(async () => {
+  const settings = await Branding.init('teamSelection');
+  if (!settings) return;
+  divisionLabel = (key) => Branding.divisionLabel(settings, key);
+  loadMyPlayers();
+})();

@@ -8,7 +8,7 @@
 </head>
 <body>
 <header class="topbar">
-  <h1>🏓 Player Info</h1>
+  <h1>Player Info</h1>
   <nav><a href="dashboard.html">Menu</a><button onclick="logout()">Log Out</button></nav>
 </header>
 <main>
@@ -22,11 +22,7 @@
     <label for="shirtSize">Shirt Size</label>
     <select id="shirtSize"></select>
     <label for="division">Division</label>
-    <select id="division">
-      <option value="men">Men's</option>
-      <option value="women">Women's</option>
-      <option value="kids">Kids</option>
-    </select>
+    <select id="division"></select>
     <div id="addError" class="error-box" hidden></div>
     <div id="addNotice" class="notice-box" hidden></div>
     <button class="primary" id="addBtn">Add Player</button>
@@ -40,6 +36,7 @@
 <script src="js/config.js"></script>
 <script src="js/api.js"></script>
 <script src="js/guard.js"></script>
+<script src="js/branding.js"></script>
 <script src="js/player-info.js"></script>
 </body>
 </html>

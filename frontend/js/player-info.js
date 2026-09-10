@@ -1,13 +1,11 @@
 requireLogin();
 
 const SHIRT_SIZES = ['YS', 'YM', 'YL', 'S', 'M', 'L', 'XL', 'XXL'];
-const shirtSelect = document.getElementById('shirtSize');
-SHIRT_SIZES.forEach((s) => {
-  const opt = document.createElement('option');
-  opt.value = s;
-  opt.textContent = s;
-  shirtSelect.appendChild(opt);
-});
+let currentSettings = null;
+
+function label(divisionKey) {
+  return Branding.divisionLabel(currentSettings, divisionKey);
+}
 
 async function loadPlayers() {
   const listEl = document.getElementById('playersList');
@@ -26,7 +24,7 @@ async function loadPlayers() {
           <span>${p.first_name} ${p.last_name}</span>
           <span class="badge ${p.paid ? 'win' : 'pending'}">${p.paid ? 'Paid' : 'Unpaid'}</span>
         </div>
-        <div class="meta">${divisionLabel(p.division)} &middot; Shirt: ${p.shirt_size} &middot;
+        <div class="meta">${label(p.division)} &middot; Shirt: ${p.shirt_size} &middot;
           ${p.team_number ? `Team #${p.team_number}` : 'No team yet'}</div>
         <div style="display:flex; gap:10px; margin-top:8px;">
           <button class="secondary editBtn" data-id="${p.id}" data-first="${p.first_name}" data-last="${p.last_name}" data-shirt="${p.shirt_size}">Edit</button>
@@ -98,4 +96,22 @@ document.getElementById('addBtn').addEventListener('click', async () => {
   }
 });
 
-loadPlayers();
+(async () => {
+  currentSettings = await Branding.init('playerInfo');
+  if (!currentSettings) return;
+
+  const shirtSelect = document.getElementById('shirtSize');
+  SHIRT_SIZES.forEach((s) => {
+    const opt = document.createElement('option');
+    opt.value = s;
+    opt.textContent = s;
+    shirtSelect.appendChild(opt);
+  });
+
+  const divisionSelect = document.getElementById('division');
+  divisionSelect.innerHTML = currentSettings.divisionOrder
+    .map((key) => `<option value="${key}">${label(key)}</option>`)
+    .join('');
+
+  loadPlayers();
+})();

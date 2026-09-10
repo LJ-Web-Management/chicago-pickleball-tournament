@@ -1,7 +1,15 @@
-function showAdminPanel() {
+let currentSettings = null;
+
+function divisionLabel(key) {
+  return Branding.divisionLabel(currentSettings, key);
+}
+
+async function showAdminPanel() {
   document.getElementById('loginCard').hidden = true;
   document.getElementById('adminPanel').hidden = false;
   document.getElementById('adminLogoutBtn').hidden = false;
+  currentSettings = await Api.get('/settings');
+  populateDivisionDropdown();
   loadStats();
 }
 
@@ -27,17 +35,25 @@ document.getElementById('adminLogoutBtn').addEventListener('click', () => {
 });
 
 // ---- Top-level tabs ----
+const TABS = ['stats', 'players', 'matches', 'settings'];
 document.querySelectorAll('#adminPanel > .tabs > button').forEach((btn) => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('#adminPanel > .tabs > button').forEach((b) => b.classList.remove('active'));
     btn.classList.add('active');
-    ['stats', 'players', 'matches'].forEach((t) => {
+    TABS.forEach((t) => {
       document.getElementById(`${t}Tab`).hidden = t !== btn.dataset.tab;
     });
     if (btn.dataset.tab === 'players') loadPlayers();
     if (btn.dataset.tab === 'matches') loadMatches();
+    if (btn.dataset.tab === 'settings') renderSettingsForm();
   });
 });
+
+function populateDivisionDropdown() {
+  const select = document.getElementById('matchDivision');
+  select.innerHTML = currentSettings.divisionOrder.map((key) => `<option value="${key}">${divisionLabel(key)}</option>`).join('');
+  adminDivision = currentSettings.divisionOrder[0];
+}
 
 // ---- Stats ----
 async function loadStats() {
@@ -94,7 +110,10 @@ function renderPlayers() {
         <span class="badge ${p.status === 'active' ? 'win' : 'tie'}">${p.status}</span></div>
       <div class="meta">${p.email} &middot; ${divisionLabel(p.division)} &middot; Shirt ${p.shirt_size} &middot;
         ${p.team_number ? `Team #${p.team_number}` : 'No team'} &middot; ${p.paid ? 'Paid' : 'Unpaid'}</div>
-      <button class="secondary editPlayerBtn" data-id="${p.id}">Edit</button>
+      <div style="display:flex; gap:10px; margin-top:8px;">
+        <button class="secondary editPlayerBtn" data-id="${p.id}">Edit</button>
+        <button class="${p.paid ? 'secondary' : 'primary'} markPaidBtn" data-id="${p.id}" data-paid="${p.paid}">${p.paid ? 'Mark Unpaid' : 'Mark Paid'}</button>
+      </div>
     </div>`
     )
     .join('');
@@ -102,6 +121,18 @@ function renderPlayers() {
   el.querySelectorAll('.editPlayerBtn').forEach((btn) =>
     btn.addEventListener('click', () => editAdminPlayer(Number(btn.dataset.id)))
   );
+  el.querySelectorAll('.markPaidBtn').forEach((btn) =>
+    btn.addEventListener('click', () => togglePaid(Number(btn.dataset.id), btn.dataset.paid !== 'true'))
+  );
+}
+
+async function togglePaid(id, paid) {
+  try {
+    await Api.put(`/admin/players/${id}`, { paid }, { admin: true });
+    loadPlayers();
+  } catch (err) {
+    alert(err.message);
+  }
 }
 
 async function editAdminPlayer(id) {
@@ -112,7 +143,7 @@ async function editAdminPlayer(id) {
   if (lastName === null) return;
   const shirtSize = prompt('Shirt size', p.shirt_size);
   if (shirtSize === null) return;
-  const division = prompt("Division (men/women/kids)", p.division);
+  const division = prompt(`Division (${currentSettings.divisionOrder.join('/')})`, p.division);
   if (division === null) return;
   const paidStr = prompt('Paid? (yes/no)', p.paid ? 'yes' : 'no');
   if (paidStr === null) return;
@@ -131,7 +162,7 @@ async function editAdminPlayer(id) {
 }
 
 // ---- Matches ----
-let adminDivision = 'men';
+let adminDivision = null;
 let adminStage = 'round_robin';
 let adminMatchData = null;
 
@@ -151,6 +182,11 @@ document.querySelectorAll('#matchesTab .tabs button[data-stage]').forEach((btn) 
 document.getElementById('generateBracketBtn').addEventListener('click', () => generateBracket(false));
 document.getElementById('regenerateBracketBtn').addEventListener('click', () => {
   if (confirm('This overwrites the existing elimination bracket for this division. Continue?')) generateBracket(true);
+});
+document.getElementById('exportMatchesBtn').addEventListener('click', () => {
+  if (!adminMatchData) return;
+  const list = adminStage === 'round_robin' ? adminMatchData.roundRobin : adminMatchData.elimination;
+  downloadCsv(`${adminDivision}-${adminStage}-schedule.csv`, list);
 });
 
 async function generateBracket(force) {
@@ -284,3 +320,128 @@ function wireAdminButtons() {
     });
   });
 }
+
+// ---- Settings ----
+const PAGE_LABELS = {
+  matchTimings: 'Match Timings',
+  myMatches: 'My Matches',
+  playerInfo: 'Player Info',
+  teamSelection: 'Team Selection',
+  feePayment: 'Fee Payment',
+  playerList: 'Player List',
+};
+
+function renderSettingsForm() {
+  document.getElementById('setEventTitle').value = currentSettings.eventTitle;
+  document.getElementById('setFee').value = (currentSettings.registrationFeeCents / 100).toFixed(2);
+  document.getElementById('setSlotMinutes').value = currentSettings.matchSlotMinutes;
+  document.getElementById('setRRStart').value = currentSettings.roundRobinStart;
+  document.getElementById('setElimStart').value = currentSettings.eliminationStart;
+  document.getElementById('setAdvance').value = currentSettings.advancePerPool;
+
+  const divEl = document.getElementById('divisionSettings');
+  divEl.innerHTML = currentSettings.divisionOrder
+    .map((key) => {
+      const d = currentSettings.divisions[key];
+      return `
+        <div style="border:1px solid var(--border); border-radius:8px; padding:10px; margin-bottom:10px;">
+          <strong>${key}</strong>
+          <label>Label</label>
+          <input class="divLabel" data-key="${key}" value="${d.label}" />
+          <label>Teams</label>
+          <input class="divTeams" data-key="${key}" type="number" min="1" step="1" value="${d.teams}" />
+          <label>Courts</label>
+          <input class="divCourts" data-key="${key}" type="number" min="1" step="1" value="${d.courts}" />
+        </div>`;
+    })
+    .join('');
+
+  const pagesEl = document.getElementById('pageSettings');
+  pagesEl.innerHTML = Object.keys(currentSettings.pages)
+    .map(
+      (key) => `
+      <label style="display:flex; align-items:center; gap:8px; font-size:1rem; color:inherit; margin-bottom:6px;">
+        <input type="checkbox" class="pageToggle" data-key="${key}" ${currentSettings.pages[key] ? 'checked' : ''} />
+        ${PAGE_LABELS[key] || key}
+      </label>`
+    )
+    .join('');
+
+  const rulesStatus = document.getElementById('rulesStatus');
+  rulesStatus.textContent = currentSettings.rulesUploadedAt
+    ? `Rules document last uploaded ${new Date(currentSettings.rulesUploadedAt).toLocaleString()}.`
+    : 'No rules document uploaded yet.';
+}
+
+document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
+  const errEl = document.getElementById('settingsError');
+  const noticeEl = document.getElementById('settingsNotice');
+  clearError(errEl);
+  noticeEl.hidden = true;
+
+  const divisions = {};
+  document.querySelectorAll('.divLabel').forEach((input) => {
+    const key = input.dataset.key;
+    divisions[key] = divisions[key] || {};
+    divisions[key].label = input.value.trim();
+  });
+  document.querySelectorAll('.divTeams').forEach((input) => {
+    divisions[input.dataset.key].teams = Number(input.value);
+  });
+  document.querySelectorAll('.divCourts').forEach((input) => {
+    divisions[input.dataset.key].courts = Number(input.value);
+  });
+
+  const pages = {};
+  document.querySelectorAll('.pageToggle').forEach((input) => {
+    pages[input.dataset.key] = input.checked;
+  });
+
+  const patch = {
+    eventTitle: document.getElementById('setEventTitle').value.trim(),
+    registrationFeeCents: Math.round(Number(document.getElementById('setFee').value) * 100),
+    matchSlotMinutes: Number(document.getElementById('setSlotMinutes').value),
+    roundRobinStart: document.getElementById('setRRStart').value.trim(),
+    eliminationStart: document.getElementById('setElimStart').value.trim(),
+    advancePerPool: Number(document.getElementById('setAdvance').value),
+    divisions,
+    pages,
+  };
+
+  try {
+    currentSettings = await Api.put('/admin/settings', patch, { admin: true });
+    populateDivisionDropdown();
+    noticeEl.textContent = 'Settings saved.';
+    noticeEl.hidden = false;
+  } catch (err) {
+    showError(errEl, err);
+  }
+});
+
+document.getElementById('uploadRulesBtn').addEventListener('click', async () => {
+  const errEl = document.getElementById('rulesError');
+  const noticeEl = document.getElementById('rulesNotice');
+  clearError(errEl);
+  noticeEl.hidden = true;
+  const fileInput = document.getElementById('rulesFile');
+  const file = fileInput.files[0];
+  if (!file) { showError(errEl, new Error('Choose a PDF file first')); return; }
+  if (file.type !== 'application/pdf') { showError(errEl, new Error('File must be a PDF')); return; }
+
+  try {
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+    const data = await Api.post('/admin/rules', { base64 }, { admin: true });
+    currentSettings.rulesUploadedAt = data.rulesUploadedAt;
+    document.getElementById('rulesStatus').textContent = `Rules document last uploaded ${new Date(data.rulesUploadedAt).toLocaleString()}.`;
+    noticeEl.textContent = 'Rules document uploaded.';
+    noticeEl.hidden = false;
+    fileInput.value = '';
+  } catch (err) {
+    showError(errEl, err);
+  }
+});
