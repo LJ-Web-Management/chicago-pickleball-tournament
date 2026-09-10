@@ -5,10 +5,10 @@ function divisionLabel(key) {
 }
 
 async function showAdminPanel() {
-  document.getElementById('loginCard').hidden = true;
-  document.getElementById('adminPanel').hidden = false;
   document.getElementById('adminLogoutBtn').hidden = false;
   currentSettings = await Api.get('/settings');
+  document.getElementById('loginCard').hidden = true;
+  document.getElementById('adminPanel').hidden = false;
   populateDivisionDropdown();
   loadStats();
 }
