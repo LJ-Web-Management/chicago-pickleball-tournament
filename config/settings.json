@@ -1,15 +1,31 @@
 {
-  "eventTitle": "Chicago Pickleball Tournament",
+  "eventTitle": "Chicago Pickleball Tournament (Test Update)",
   "registrationFeeCents": 4000,
   "matchSlotMinutes": 30,
   "roundRobinStart": "09:00",
   "eliminationStart": "14:00",
   "advancePerPool": 2,
-  "divisionOrder": ["men", "women", "kids"],
+  "divisionOrder": [
+    "men",
+    "women",
+    "kids"
+  ],
   "divisions": {
-    "men": { "label": "Men's", "teams": 24, "courts": 6 },
-    "women": { "label": "Women's", "teams": 16, "courts": 4 },
-    "kids": { "label": "Kids", "teams": 8, "courts": 2 }
+    "men": {
+      "label": "Men's",
+      "teams": 24,
+      "courts": 6
+    },
+    "women": {
+      "label": "Women's",
+      "teams": 16,
+      "courts": 4
+    },
+    "kids": {
+      "label": "Kids",
+      "teams": 8,
+      "courts": 2
+    }
   },
   "pages": {
     "matchTimings": true,
